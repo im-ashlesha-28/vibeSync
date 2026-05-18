@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-vibe-cream text-slate-800 font-sans overflow-x-hidden;
+    /* Soft glowing background blobs */
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(200, 182, 255, 0.4) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(255, 202, 212, 0.4) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(189, 224, 254, 0.4) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(255, 248, 240, 0.4) 0px, transparent 50%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    @apply bg-white/40 backdrop-blur-md border border-white/50 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] rounded-3xl;
+  }
+  
+  .glass-panel {
+    @apply bg-white/60 backdrop-blur-lg border border-white/60 shadow-lg rounded-2xl;
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-vibe-indigo via-vibe-lavender to-vibe-pink;
+  }
+}
+
+/* Custom scrollbar for aesthetic */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #C8B6FF;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #5A4FCF;
+}
