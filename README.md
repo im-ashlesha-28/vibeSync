@@ -2,13 +2,16 @@
 
 **"How compatible are your vibes?"**
 
+👉 **[Take the Quiz Live Here!](https://vibesync-phi.vercel.app/)** *(Replace with your actual Vercel link if different)*
+
 VibeSync is a modern, aesthetic social compatibility platform designed with heavy Gen Z energy. It analyzes human vibes across friendships, relationships, and friend groups to determine if you are emotionally synced or just sharing one braincell. 
 
 The application mixes the aesthetic of Spotify Wrapped, Pinterest, and TikTok personality quizzes into a highly interactive, shareable web app.
 
 ## ✨ Features
 
-- **The Sync Quiz**: An interactive, smooth, multi-step quiz with chaotic, personality-revealing questions.
+- **2-Player Multiplayer Flow**: Person A takes the quiz, generates a unique share link, and sends it to Person B. The algorithm compares both answers to generate a true compatibility score!
+- **Friendship & Relationship Modes**: Choose your dynamic and answer 10 deep, chaotic, and revealing questions.
 - **Aesthetic Dashboard**: Visualizes your compatibility using beautiful Radar and Pie charts.
 - **Group Dynamics Map**: An ecosystem map assigning your friends roles like "Therapist Friend" or "Chaotic One".
 - **Glassmorphism UI**: Beautiful frosted glass cards, soft gradients, and floating particles.
