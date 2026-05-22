@@ -36,9 +36,12 @@ const SharePage = () => {
         <h2 className="text-2xl font-bold mb-6">Your Unique Link:</h2>
         
         <div className="flex flex-col sm:flex-row w-full gap-4">
-          <div className="flex-1 bg-white/50 border-2 border-vibe-lavender/50 rounded-xl px-4 py-3 flex items-center overflow-x-auto">
-            <span className="text-slate-600 whitespace-nowrap">{shareUrl}</span>
-          </div>
+          <input 
+            type="text"
+            readOnly
+            value={shareUrl}
+            className="flex-1 bg-white/50 border-2 border-vibe-lavender/50 rounded-xl px-4 py-3 text-slate-600 focus:outline-none focus:border-vibe-indigo"
+          />
           
           <button 
             onClick={copyToClipboard}
