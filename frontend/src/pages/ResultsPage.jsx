@@ -71,18 +71,23 @@ const ResultsPage = () => {
   ];
 
   const summaryText = resultData?.summary || "Emotionally chaotic but spiritually synced. This duo shares one braincell and uses it to make terrible decisions together.";
+  const personAName = resultData?.personAName || "You";
+  const personBName = resultData?.personBName || "Them";
 
   return (
     <div className="max-w-5xl mx-auto flex flex-col gap-8 pb-10">
       
       {/* Header section */}
       <div className="text-center mt-6">
+        <div className="inline-block px-4 py-1 rounded-full bg-vibe-pink/20 text-vibe-indigo font-bold text-sm mb-4 uppercase tracking-widest border border-vibe-lavender">
+          {resultData?.mode === 'relationship' ? '❤️ Relationship Sync' : '👯‍♀️ Friendship Sync'}
+        </div>
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-4xl md:text-5xl font-black mb-4"
         >
-          Your Vibe Check is <span className="text-gradient">Ready</span>
+          {personAName} & {personBName}'s <br/> <span className="text-gradient">Vibe Check</span>
         </motion.h1>
         <p className="text-lg text-slate-500 font-medium max-w-xl mx-auto">
           "{summaryText}"
