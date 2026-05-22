@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const FloatingElement = ({ children, delay = 0, duration = 4, className = '', yOffset = -20 }) => {
+const FloatingElement = ({ children, delay = 0, duration = 4, className = '', yOffset = -20, style = {} }) => {
   return (
     <motion.div
       animate={{
@@ -15,6 +15,7 @@ const FloatingElement = ({ children, delay = 0, duration = 4, className = '', yO
         delay: delay,
       }}
       className={className}
+      style={style}
     >
       {children}
     </motion.div>
