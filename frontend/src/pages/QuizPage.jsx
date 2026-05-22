@@ -44,18 +44,19 @@ const QuizPage = () => {
   const questions = mode === 'relationship' ? relationshipQuestions : friendshipQuestions;
 
   const handleSelect = (questionId, optionType) => {
-    setAnswers({ ...answers, [questionId]: optionType });
+    const updatedAnswers = { ...answers, [questionId]: optionType };
+    setAnswers(updatedAnswers);
     
     setTimeout(() => {
       if (currentStep < questions.length - 1) {
         setCurrentStep(currentStep + 1);
       } else {
-        submitQuiz();
+        submitQuiz(updatedAnswers);
       }
     }, 400);
   };
 
-  const submitQuiz = async () => {
+  const submitQuiz = async (finalAnswers) => {
     setIsSubmitting(true);
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
     
@@ -65,14 +66,14 @@ const QuizPage = () => {
         const response = await fetch(`${apiUrl}/sync/match`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ inviteId, personBName: personName, answers })
+          body: JSON.stringify({ inviteId, personBName: personName, answers: finalAnswers })
         });
         
         const data = await response.json();
         if (data.success) {
           navigate(`/result/${data.resultId}`);
         } else {
-          alert("Failed to calculate match.");
+          alert(`Backend Error: ${data.message || "Failed to calculate match"}`);
           setIsSubmitting(false);
         }
       } else {
@@ -80,19 +81,20 @@ const QuizPage = () => {
         const response = await fetch(`${apiUrl}/invite`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ personAName: personName, mode, answers })
+          body: JSON.stringify({ personAName: personName, mode, answers: finalAnswers })
         });
         
         const data = await response.json();
         if (data.success) {
           navigate(`/share/${data.inviteId}`);
         } else {
-          alert("Failed to create invite.");
+          alert(`Backend Error: ${data.message || "Failed to create invite"}`);
           setIsSubmitting(false);
         }
       }
     } catch (error) {
       console.error("API error:", error);
+      alert(`Network Error: ${error.message}. Make sure your backend is running and VITE_API_URL is set correctly!`);
       setIsSubmitting(false);
     }
   };
