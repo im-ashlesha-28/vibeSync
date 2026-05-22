@@ -1,60 +1,55 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
-import { Share2, Download, ArrowRight } from 'lucide-react';
+import html2canvas from 'html2canvas';
+import { Camera, ArrowRight, AlertTriangle } from 'lucide-react';
 import GlassCard from '../components/GlassCard';
 import GradientButton from '../components/GradientButton';
-import FloatingElement from '../components/FloatingElement';
-
-const radarData = [
-  { subject: 'Chaos', A: 80, fullMark: 100 },
-  { subject: 'Emotional', A: 90, fullMark: 100 },
-  { subject: 'Meme Logic', A: 65, fullMark: 100 },
-  { subject: 'Planning', A: 30, fullMark: 100 },
-  { subject: 'Delusion', A: 85, fullMark: 100 },
-];
-
-const pieData = [
-  { name: 'Synced', value: 75, color: '#5A4FCF' },
-  { name: 'Confused', value: 25, color: '#C8B6FF' },
-];
 
 const ResultsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
   const [resultData, setResultData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const vibeCardRef = useRef(null);
 
   useEffect(() => {
-    const fetchResults = async () => {
+    const fetchResult = async () => {
       try {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-        const response = await fetch(`${apiUrl}/sync/${id}`);
-        const data = await response.json();
-        
-        if (data.scores) {
-          setResultData(data);
-        }
+        const res = await fetch(`${apiUrl}/sync/${id}`);
+        const data = await res.json();
+        setResultData(data);
       } catch (error) {
-        console.error("Failed to fetch results", error);
+        console.error("Failed to fetch result", error);
       } finally {
         setLoading(false);
       }
     };
-    
-    fetchResults();
+    fetchResult();
   }, [id]);
+
+  const handleDownload = async () => {
+    if (vibeCardRef.current) {
+      const canvas = await html2canvas(vibeCardRef.current, { backgroundColor: null, scale: 2 });
+      const image = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = image;
+      link.download = `VibeSync_${resultData?.personAName}_${resultData?.personBName}.png`;
+      link.click();
+    }
+  };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-[70vh]">
-        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="w-12 h-12 border-4 border-vibe-indigo border-t-transparent rounded-full" />
+      <div className="flex flex-col items-center justify-center min-h-[70vh]">
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} className="w-16 h-16 border-4 border-vibe-indigo border-t-transparent rounded-full mb-6" />
+        <h2 className="text-2xl font-bold text-gradient">Calculating Vibes...</h2>
       </div>
     );
   }
 
-  // Generate chart data based on API response or fallback to default
   const activeScores = resultData?.scores || { chaos: 80, emotional: 90, memeLogic: 65, planning: 30, delusion: 85 };
   const currentRadarData = [
     { subject: 'Chaos', A: activeScores.chaos, fullMark: 100 },
@@ -73,99 +68,107 @@ const ResultsPage = () => {
   const summaryText = resultData?.summary || "Emotionally chaotic but spiritually synced. This duo shares one braincell and uses it to make terrible decisions together.";
   const personAName = resultData?.personAName || "You";
   const personBName = resultData?.personBName || "Them";
+  const badge = resultData?.badge || "Aesthetic but Chaotic 💅";
+  const redFlags = resultData?.redFlags || { personA: "Will start a petty argument just to feel something.", personB: "Fully believes they are the main character of a 2000s romcom." };
 
   return (
     <div className="max-w-5xl mx-auto flex flex-col gap-8 pb-10">
       
-      {/* Header section */}
-      <div className="text-center mt-6">
-        <div className="inline-block px-4 py-1 rounded-full bg-vibe-pink/20 text-vibe-indigo font-bold text-sm mb-4 uppercase tracking-widest border border-vibe-lavender">
-          {resultData?.mode === 'relationship' ? '❤️ Relationship Sync' : '👯‍♀️ Friendship Sync'}
-        </div>
-        <motion.h1 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-4xl md:text-5xl font-black mb-4"
-        >
-          {personAName} & {personBName}'s <br/> <span className="text-gradient">Vibe Check</span>
-        </motion.h1>
-        <p className="text-lg text-slate-500 font-medium max-w-xl mx-auto">
-          "{summaryText}"
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+      {/* VIBE CARD (Capture Target) */}
+      <div ref={vibeCardRef} className="p-4 rounded-3xl bg-[#fdfcff]">
         
-        {/* Radar Chart Card */}
-        <GlassCard className="flex flex-col items-center">
-          <h2 className="text-2xl font-bold mb-6">Vibe Spectrum</h2>
-          <div className="w-full h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={currentRadarData}>
-                <PolarGrid stroke="#fff" />
-                <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 14, fontWeight: 600 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                <Radar name="Vibe" dataKey="A" stroke="#5A4FCF" fill="#C8B6FF" fillOpacity={0.6} />
-                <Tooltip />
-              </RadarChart>
-            </ResponsiveContainer>
+        {/* Header section */}
+        <div className="text-center mt-6">
+          <div className="inline-block px-4 py-1 rounded-full bg-vibe-pink/20 text-vibe-indigo font-bold text-sm mb-4 uppercase tracking-widest border border-vibe-lavender">
+            {resultData?.mode === 'relationship' ? '❤️ Relationship Sync' : '👯‍♀️ Friendship Sync'}
           </div>
-        </GlassCard>
+          <motion.h1 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-5xl font-black mb-2">
+            {personAName} & {personBName}
+          </motion.h1>
+          <div className="inline-block px-6 py-2 rounded-xl bg-gradient-to-r from-vibe-lavender to-vibe-indigo text-white font-black text-xl mb-6 shadow-lg transform -rotate-2">
+            {badge}
+          </div>
+          <p className="text-lg text-slate-500 font-medium max-w-xl mx-auto">
+            "{summaryText}"
+          </p>
+        </div>
 
-        {/* Score Card */}
-        <GlassCard className="flex flex-col items-center justify-center relative overflow-hidden">
-          <FloatingElement className="absolute -top-10 -right-10 text-9xl opacity-10" delay={0}>🔥</FloatingElement>
-          
-          <h2 className="text-2xl font-bold mb-2 z-10">Compatibility Score</h2>
-          
-          <div className="w-full h-[250px] relative z-10">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={currentPieData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={70}
-                  outerRadius={90}
-                  startAngle={90}
-                  endAngle={-270}
-                  dataKey="value"
-                  stroke="none"
-                >
-                  {currentPieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-              <span className="text-5xl font-black text-vibe-indigo">{compScore}%</span>
-              <p className="text-sm font-bold text-slate-400 mt-1">
-                {compScore > 80 ? 'Soulmates' : compScore > 50 ? 'Chaotic Duo' : 'High Risk'}
-              </p>
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+          <GlassCard className="h-80 flex flex-col items-center">
+            <h3 className="text-xl font-bold mb-2">Vibe Compatibility</h3>
+            <div className="w-full h-full flex items-center justify-center relative">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={currentPieData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                    {currentPieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute flex flex-col items-center justify-center">
+                <span className="text-4xl font-black text-vibe-indigo">{compScore}%</span>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Match</span>
+              </div>
             </div>
-          </div>
-        </GlassCard>
+          </GlassCard>
+          <GlassCard className="h-80 flex flex-col items-center">
+            <h3 className="text-xl font-bold mb-2">Energy Signature</h3>
+            <div className="w-full h-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={currentRadarData}>
+                  <PolarGrid stroke="#E2E8F0" />
+                  <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748B', fontSize: 12, fontWeight: 600 }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                  <Radar name="Vibe" dataKey="A" stroke="#5A4FCF" fill="#C8B6FF" fillOpacity={0.6} />
+                  <Tooltip />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          </GlassCard>
+        </div>
+
+        {/* Red Flag Analyzer */}
+        <div className="mt-8">
+          <GlassCard className="border-2 border-red-200/50 bg-red-50/30">
+            <h3 className="text-2xl font-bold mb-4 flex items-center gap-2 text-red-500">
+              <AlertTriangle /> The Red Flag Analyzer
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 bg-white/60 rounded-xl">
+                <h4 className="font-bold text-slate-700 mb-1">{personAName}'s Biggest Red Flag:</h4>
+                <p className="text-slate-600 italic">"{redFlags.personA}"</p>
+              </div>
+              <div className="p-4 bg-white/60 rounded-xl">
+                <h4 className="font-bold text-slate-700 mb-1">{personBName}'s Biggest Red Flag:</h4>
+                <p className="text-slate-600 italic">"{redFlags.personB}"</p>
+              </div>
+            </div>
+          </GlassCard>
+        </div>
+
+        <div className="text-center mt-6 pt-4 border-t border-slate-200/50">
+          <p className="text-sm font-bold text-slate-400 tracking-widest uppercase">vibesync.vercel.app</p>
+        </div>
+      </div>
+      {/* END VIBE CARD */}
+
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-4 justify-center mt-4">
+        <GradientButton onClick={handleDownload} className="flex items-center justify-center gap-2 px-8">
+          <Camera className="w-5 h-5" /> Share to Story
+        </GradientButton>
+        
+        <button 
+          onClick={() => navigate('/')} 
+          className="px-8 py-3 rounded-xl font-bold bg-white/50 border-2 border-white text-vibe-indigo hover:bg-white hover:shadow-lg transition-all flex items-center justify-center gap-2"
+        >
+          Check Another Vibe <ArrowRight className="w-5 h-5" />
+        </button>
       </div>
 
-      {/* Share Section */}
-      <GlassCard className="mt-4 flex flex-col sm:flex-row items-center justify-between p-8 bg-gradient-to-r from-vibe-lavender/20 to-vibe-pink/20">
-        <div>
-          <h3 className="text-2xl font-bold mb-2">Flex your vibe</h3>
-          <p className="text-slate-600 mb-4 sm:mb-0">Share this highly accurate scientific result to your story.</p>
-        </div>
-        <div className="flex gap-4">
-          <button className="p-4 bg-white rounded-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
-            <Share2 className="text-vibe-indigo" />
-          </button>
-          <button className="p-4 bg-white rounded-full shadow-md hover:shadow-lg transition-all hover:-translate-y-1">
-            <Download className="text-vibe-indigo" />
-          </button>
-          <GradientButton onClick={() => navigate('/group')} className="px-6 py-3">
-            Group Lore <ArrowRight className="inline w-4 h-4 ml-1" />
-          </GradientButton>
-        </div>
-      </GlassCard>
     </div>
   );
 };

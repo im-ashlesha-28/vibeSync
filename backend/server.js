@@ -46,6 +46,11 @@ const ResultSchema = new mongoose.Schema({
   },
   compatibilityScore: Number,
   summary: String,
+  badge: String,
+  redFlags: {
+    personA: String,
+    personB: String
+  },
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -139,6 +144,38 @@ app.post('/api/sync/match', async (req, res) => {
     // Add some random fuzziness so it's not strictly rigid
     const compatibilityScore = Math.min(100, Math.max(0, baseScore + Math.floor(Math.random() * 20 - 10)));
     
+    // Analyze prominent traits for Red Flags
+    const getProminentTrait = (answersObj) => {
+      const counts = {};
+      for (const key in answersObj) {
+        const type = answersObj[key];
+        counts[type] = (counts[type] || 0) + 1;
+      }
+      return Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b, 'chaos'); // default chaos
+    };
+
+    const redFlagMap = {
+      chaos: "Will start a petty argument just to feel something.",
+      delulu: "Fully believes they are the main character of a 2000s romcom.",
+      ghoster: "Takes 3-5 business days to reply to a simple text.",
+      planner: "Has a shared Google Calendar for casual hangouts.",
+      meme: "Communicates strictly via 4 AM TikTok links.",
+      emotional: "Will cry if you don't use emojis in a serious text."
+    };
+
+    const personATrait = getProminentTrait(personAAnswers);
+    const personBTrait = getProminentTrait(personBAnswers);
+    
+    // Determine Badge
+    let badge = "Uncategorized";
+    if (compatibilityScore > 90) badge = "Codependent Besties 🔗";
+    else if (compatibilityScore > 75) badge = "Soulmates (Derogatory) ✨";
+    else if (personATrait === 'chaos' && personBTrait === 'chaos') badge = "Walking Disasters 🧨";
+    else if (personATrait === 'ghoster' || personBTrait === 'ghoster') badge = "The Ghoster Duo 👻";
+    else if (personATrait === 'delulu' && personBTrait === 'delulu') badge = "Chronically Delusional ☁️";
+    else if (compatibilityScore < 40) badge = "Therapy Needed 🛋️";
+    else badge = "Aesthetic but Chaotic 💅";
+
     const resultData = {
       personAName: inviteData.personAName,
       personBName: personBName,
@@ -155,7 +192,12 @@ app.post('/api/sync/match', async (req, res) => {
         ? `Soulmates. ${inviteData.personAName} and ${personBName} are fundamentally synced on a spiritual level.` 
         : compatibilityScore > 50
         ? `A chaotic duo. ${inviteData.personAName} and ${personBName} don't always agree, but it works.`
-        : `High risk. ${inviteData.personAName} and ${personBName} might need couples therapy soon.`
+        : `High risk. ${inviteData.personAName} and ${personBName} might need couples therapy soon.`,
+      badge: badge,
+      redFlags: {
+        personA: redFlagMap[personATrait] || redFlagMap['chaos'],
+        personB: redFlagMap[personBTrait] || redFlagMap['chaos']
+      }
     };
 
     if (Result) {
