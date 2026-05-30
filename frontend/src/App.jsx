@@ -5,6 +5,9 @@ import QuizPage from './pages/QuizPage';
 import ResultsPage from './pages/ResultsPage';
 import GroupMapPage from './pages/GroupMapPage';
 import SharePage from './pages/SharePage';
+import GroupLobbyPage from './pages/GroupLobbyPage';
+import GroupQuizPage from './pages/GroupQuizPage';
+import GroupResultsPage from './pages/GroupResultsPage';
 import Navbar from './components/Navbar';
 
 function App() {
@@ -20,6 +23,10 @@ function App() {
             <Route path="/share/:inviteId" element={<SharePage />} />
             <Route path="/result/:id" element={<ResultsPage />} />
             <Route path="/group" element={<GroupMapPage />} />
+            <Route path="/group-lobby" element={<GroupLobbyPage />} />
+            <Route path="/group-lobby/:id" element={<GroupLobbyPage />} />
+            <Route path="/group-quiz/:id" element={<GroupQuizPage />} />
+            <Route path="/group-results/:id" element={<GroupResultsPage />} />
           </Routes>
         </main>
       </div>

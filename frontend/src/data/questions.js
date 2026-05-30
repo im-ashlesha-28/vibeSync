@@ -1,102 +1,102 @@
 export const friendshipQuestions = [
   {
     id: "f1",
-    question: "When one of you goes through a breakup, what is the protocol?",
+    question: "Who would accidentally become famous overnight?",
     options: [
-      { text: "Pull up with snacks and talk for 5 hours", type: "emotional" },
-      { text: "Immediately stalk the ex and plot revenge", type: "chaos" },
-      { text: "Send 30 TikToks to distract them", type: "meme" },
-      { text: "Give logical advice they won't follow", type: "planner" },
+      { text: "Posting an unhinged 3 AM TikTok", type: "chaos" },
+      { text: "Getting caught in the background of a news broadcast", type: "delulu" },
+      { text: "Starting a weirdly successful niche business", type: "planner" },
+      { text: "Going viral for crying in public", type: "emotional" },
     ]
   },
   {
     id: "f2",
-    question: "How do you guys make plans?",
+    question: "Who is most likely to leave everyone on read for 3 days?",
     options: [
-      { text: "One person plans everything, the other just shows up", type: "planner" },
-      { text: "We say 'let's hang' for 3 months and never do", type: "ghoster" },
-      { text: "Spontaneous text at 11 PM: 'u up?'", type: "chaos" },
-      { text: "We just end up at each other's houses uninvited", type: "emotional" },
+      { text: "Because they were binge-watching a show", type: "ghoster" },
+      { text: "Because they mentally replied and forgot", type: "delulu" },
+      { text: "Because they were 'protecting their peace'", type: "emotional" },
+      { text: "Because they lost their phone at a party", type: "chaos" },
     ]
   },
   {
     id: "f3",
-    question: "If you two were in a horror movie...",
+    question: "Who would survive a reality show like Survivor or Big Brother?",
     options: [
-      { text: "We'd be the first ones to die making a stupid joke", type: "chaos" },
-      { text: "I would sacrifice you to save myself (sorry)", type: "meme" },
-      { text: "We'd figure out the plot and survive", type: "planner" },
-      { text: "We'd try to befriend the ghost", type: "delulu" },
+      { text: "Manipulating everyone with a mastermind strategy", type: "planner" },
+      { text: "Flirting their way to the finale", type: "delulu" },
+      { text: "Starting drama just to get camera time", type: "chaos" },
+      { text: "Everyone keeps them because they cook", type: "emotional" },
     ]
   },
   {
     id: "f4",
-    question: "What's the primary way you communicate?",
+    question: "Who would start a business first?",
     options: [
-      { text: "Sending reels we don't actually watch", type: "meme" },
-      { text: "Voice notes that are basically podcasts", type: "emotional" },
-      { text: "Roasting each other constantly", type: "chaos" },
-      { text: "Double texting when left on read", type: "delulu" },
+      { text: "A detailed 5-year plan tech startup", type: "planner" },
+      { text: "Selling overpriced thrifted clothes", type: "meme" },
+      { text: "A sketchy pyramid scheme", type: "chaos" },
+      { text: "A lifestyle coaching brand with zero credentials", type: "delulu" },
     ]
   },
   {
     id: "f5",
-    question: "How do you handle apologies?",
+    question: "Who would get everyone lost on a road trip?",
     options: [
-      { text: "A deep, emotional paragraph", type: "emotional" },
-      { text: "Sending a meme like nothing happened", type: "meme" },
-      { text: "Buying them food", type: "planner" },
-      { text: "We just don't, we pretend it never happened", type: "ghoster" },
+      { text: "Refusing to use GPS because they 'know a shortcut'", type: "chaos" },
+      { text: "Driving 2 hours in the wrong direction while talking", type: "ghoster" },
+      { text: "Stopping at every weird roadside attraction", type: "meme" },
+      { text: "Following the GPS perfectly but to the wrong state", type: "delulu" },
     ]
   },
   {
     id: "f6",
-    question: "What happens when one of you gets a new crush?",
+    question: "Who would win an argument with pure, unearned confidence?",
     options: [
-      { text: "Full FBI background check in 10 minutes", type: "planner" },
-      { text: "Feeding their delusions entirely", type: "delulu" },
-      { text: "Telling them it's a terrible idea", type: "chaos" },
-      { text: "Getting overly invested in their texts", type: "emotional" },
+      { text: "Making up fake statistics that sound real", type: "chaos" },
+      { text: "Refusing to listen to logic", type: "delulu" },
+      { text: "Bringing up a highly organized list of receipts", type: "planner" },
+      { text: "Crying until the other person feels bad", type: "emotional" },
     ]
   },
   {
     id: "f7",
-    question: "What's your dynamic in a group setting?",
+    question: "Who is most likely to have a secret life nobody knows about?",
     options: [
-      { text: "Making eye contact across the room to judge people", type: "chaos" },
-      { text: "Sticking together the entire night", type: "emotional" },
-      { text: "Wandering off and finding each other later", type: "ghoster" },
-      { text: "Taking care of everyone else", type: "planner" },
+      { text: "Actually being incredibly wealthy", type: "planner" },
+      { text: "Running a massive fan account", type: "meme" },
+      { text: "Dating three different people at once", type: "chaos" },
+      { text: "Being a completely different person around their family", type: "ghoster" },
     ]
   },
   {
     id: "f8",
-    question: "How do you handle borrowing money from each other?",
+    question: "Who would survive longest in a zombie apocalypse?",
     options: [
-      { text: "Venmo requesting exactly $4.32", type: "planner" },
-      { text: "'You get this one, I'll get the next one'", type: "emotional" },
-      { text: "We have lost track completely", type: "chaos" },
-      { text: "Paying them back in iced coffee", type: "meme" },
+      { text: "Having a fully prepped bunker ready", type: "planner" },
+      { text: "Befriending the zombies", type: "delulu" },
+      { text: "Sacrificing others to save themselves", type: "chaos" },
+      { text: "Hiding and crying until it's over", type: "emotional" },
     ]
   },
   {
     id: "f9",
-    question: "What is your biggest shared delusion?",
+    question: "Who is the 'Mom' of the friend group?",
     options: [
-      { text: "That we will actually start working out together", type: "delulu" },
-      { text: "That we are the main characters", type: "chaos" },
-      { text: "That we'll save money this weekend", type: "planner" },
-      { text: "That our red flags are actually quirks", type: "meme" },
+      { text: "Carrying snacks and bandaids everywhere", type: "planner" },
+      { text: "Giving great advice but making terrible life choices", type: "emotional" },
+      { text: "Yelling at everyone to drink water", type: "chaos" },
+      { text: "Making sure everyone gets home safe via Life360", type: "ghoster" },
     ]
   },
   {
     id: "f10",
-    question: "What is the true foundation of your friendship?",
+    question: "Who would pull the craziest prank?",
     options: [
-      { text: "Trauma bonding", type: "emotional" },
-      { text: "Shared hatred for the same people", type: "chaos" },
-      { text: "We just matched each other's freak", type: "delulu" },
-      { text: "Pure, wholesome love and support", type: "planner" },
+      { text: "Something deeply psychological that takes months", type: "planner" },
+      { text: "Something dangerous and impulsive", type: "chaos" },
+      { text: "Something involving a fake identity", type: "meme" },
+      { text: "Forgetting the punchline halfway through", type: "delulu" },
     ]
   }
 ];
@@ -104,102 +104,52 @@ export const friendshipQuestions = [
 export const relationshipQuestions = [
   {
     id: "r1",
-    question: "How long is acceptable to leave each other on delivered?",
+    question: "Who is most likely to say 'I love you' first?",
     options: [
-      { text: "Max 1 hour, otherwise I panic", type: "emotional" },
-      { text: "A few hours if we're busy", type: "planner" },
-      { text: "All day, we aren't clingy", type: "ghoster" },
-      { text: "Who cares, we communicate telepathically", type: "delulu" },
+      { text: "Accidentally blurting it out while drunk", type: "chaos" },
+      { text: "Planning a whole romantic evening for it", type: "planner" },
+      { text: "Saying it after exactly 3 weeks", type: "delulu" },
+      { text: "Waiting a year just to be safe", type: "ghoster" },
     ]
   },
   {
     id: "r2",
-    question: "What is your primary Love Language?",
+    question: "Who is the most jealous?",
     options: [
-      { text: "Sending TikToks that remind me of you", type: "meme" },
-      { text: "Physical touch / clinginess", type: "emotional" },
-      { text: "Buying little treats", type: "planner" },
-      { text: "Playfully bullying each other", type: "chaos" },
+      { text: "Stalking followers lists at 2 AM", type: "planner" },
+      { text: "Starting a fight over a liked photo", type: "chaos" },
+      { text: "Pretending not to care but secretly seething", type: "ghoster" },
+      { text: "Crying because someone looked at them", type: "emotional" },
     ]
   },
   {
     id: "r3",
-    question: "How do you handle a serious argument?",
+    question: "Who is more likely to ruin a surprise?",
     options: [
-      { text: "We sit down and talk it out like adults", type: "planner" },
-      { text: "One of us cries and the other apologizes", type: "emotional" },
-      { text: "We yell, then order pizza 10 mins later", type: "chaos" },
-      { text: "Silent treatment until someone caves", type: "ghoster" },
+      { text: "Getting too excited and just telling them", type: "emotional" },
+      { text: "Leaving a tab open with the receipt", type: "chaos" },
+      { text: "Snooping until they find the gift", type: "planner" },
+      { text: "Assuming what it is and being completely wrong", type: "delulu" },
     ]
   },
   {
     id: "r4",
-    question: "What's the vibe for a perfect date night?",
+    question: "Who takes longer to get ready for a date?",
     options: [
-      { text: "Rotting in bed watching Netflix", type: "meme" },
-      { text: "A meticulously planned dinner reservation", type: "planner" },
-      { text: "Doing something impulsive and slightly illegal", type: "chaos" },
-      { text: "Deep talks under the stars", type: "emotional" },
+      { text: "Changing outfits 5 times and hating all of them", type: "emotional" },
+      { text: "Doing a full 12-step skincare routine", type: "planner" },
+      { text: "Forgetting they had a date until 10 mins before", type: "chaos" },
+      { text: "Making TikToks while getting ready", type: "meme" },
     ]
   },
   {
     id: "r5",
-    question: "Who apologizes first?",
+    question: "Who is more likely to fall asleep during a movie?",
     options: [
-      { text: "Always me", type: "emotional" },
-      { text: "Always them", type: "delulu" },
-      { text: "Whoever realizes they were being irrational", type: "planner" },
-      { text: "We just randomly start being nice again", type: "chaos" },
-    ]
-  },
-  {
-    id: "r6",
-    question: "How do you feel about sharing passwords/locations?",
-    options: [
-      { text: "We have each other's Life360 and Insta logins", type: "emotional" },
-      { text: "Location yes, passwords no", type: "planner" },
-      { text: "Absolutely not, boundaries!", type: "ghoster" },
-      { text: "I check their location to see if they're ignoring me", type: "chaos" },
-    ]
-  },
-  {
-    id: "r7",
-    question: "What do you do when they are in a bad mood?",
-    options: [
-      { text: "Give them space to breathe", type: "planner" },
-      { text: "Aggressively try to fix their problems", type: "chaos" },
-      { text: "Bring them their favorite food", type: "emotional" },
-      { text: "Assume it's my fault and spiral", type: "delulu" },
-    ]
-  },
-  {
-    id: "r8",
-    question: "What is your biggest relationship red flag?",
-    options: [
-      { text: "I get jealous way too easily", type: "emotional" },
-      { text: "I am completely emotionally unavailable", type: "ghoster" },
-      { text: "I start petty arguments for attention", type: "chaos" },
-      { text: "I think I can fix them", type: "delulu" },
-    ]
-  },
-  {
-    id: "r9",
-    question: "Who is more likely to propose?",
-    options: [
-      { text: "I will literally propose tomorrow", type: "delulu" },
-      { text: "Them, I'm waiting for the ring", type: "planner" },
-      { text: "Neither, marriage is a social construct", type: "chaos" },
-      { text: "We'll probably accidentally get married in Vegas", type: "meme" },
-    ]
-  },
-  {
-    id: "r10",
-    question: "What keeps you two together?",
-    options: [
-      { text: "Genuine, unwavering trust and love", type: "planner" },
-      { text: "The sex is too good to leave", type: "chaos" },
-      { text: "We are obsessed with each other", type: "delulu" },
-      { text: "They're my absolute best friend", type: "emotional" },
+      { text: "Within the first 10 minutes", type: "ghoster" },
+      { text: "Only during the most important plot twist", type: "chaos" },
+      { text: "Refusing to admit they were sleeping", type: "delulu" },
+      { text: "Staying awake but explaining the entire plot", type: "planner" },
     ]
   }
 ];

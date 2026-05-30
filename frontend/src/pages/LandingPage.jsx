@@ -36,8 +36,8 @@ const LandingPage = () => {
           <GradientButton onClick={() => navigate('/sync')} className="text-lg flex items-center gap-2">
             <Sparkles className="w-5 h-5" /> Start Syncing
           </GradientButton>
-          <button onClick={() => navigate('/group')} className="px-8 py-4 rounded-full font-bold text-slate-700 bg-white/50 backdrop-blur-md border border-white hover:bg-white/70 transition-all shadow-lg hover:shadow-xl flex items-center gap-2">
-            <Users className="w-5 h-5 text-vibe-indigo" /> Test Your Group
+          <button onClick={() => navigate('/group-lobby')} className="px-8 py-4 rounded-full font-bold text-slate-700 bg-white/50 backdrop-blur-md border border-white hover:bg-white/70 transition-all shadow-lg hover:shadow-xl flex items-center gap-2">
+            <Users className="w-5 h-5 text-vibe-indigo" /> Start GroupLore
           </button>
         </div>
       </motion.div>

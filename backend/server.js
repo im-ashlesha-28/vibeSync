@@ -54,16 +54,40 @@ const ResultSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+const GroupSessionSchema = new mongoose.Schema({
+  hostName: String,
+  members: Array, // [{ id, name, answers, votes }]
+  status: { type: String, default: 'lobby' }, // lobby, active, completed
+  createdAt: { type: Date, default: Date.now }
+});
+
+const GroupResultSchema = new mongoose.Schema({
+  sessionId: String,
+  groupTitle: String,
+  groupCompatibility: Number,
+  scores: Object, // { trust, loyalty, chaos, meme, communication, etc. }
+  lore: String,
+  members: Array, // [{ id, name, primaryLabel, secondaryLabels, stats }]
+  createdAt: { type: Date, default: Date.now }
+});
+
 let Invite;
 let Result;
+let GroupSession;
+let GroupResult;
+
 if (process.env.MONGODB_URI) {
   Invite = mongoose.model('Invite', InviteSchema);
   Result = mongoose.model('Result', ResultSchema);
+  GroupSession = mongoose.model('GroupSession', GroupSessionSchema);
+  GroupResult = mongoose.model('GroupResult', GroupResultSchema);
 }
 
 // Fallback in-memory DB if MongoDB is not provided yet
 const fallbackResultsDb = new Map();
 const fallbackInvitesDb = new Map();
+const fallbackGroupSessionsDb = new Map();
+const fallbackGroupResultsDb = new Map();
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
 // API Route: Create Invite (Person A)
@@ -246,6 +270,211 @@ app.get('/api/sync/:id', async (req, res) => {
 // Simple health check endpoint for Render
 app.get('/', (req, res) => {
   res.json({ status: 'VibeSync API is running!' });
+});
+
+// --- GroupLore API Routes ---
+
+app.post('/api/group/create', async (req, res) => {
+  try {
+    const { hostName } = req.body;
+    const hostMember = { id: generateId(), name: hostName, answers: {}, votes: {} };
+    const sessionData = { hostName, members: [hostMember], status: 'lobby' };
+    
+    if (GroupSession) {
+      const newSession = new GroupSession(sessionData);
+      await newSession.save();
+      return res.json({ success: true, sessionId: newSession._id, hostId: hostMember.id });
+    } else {
+      const mockId = generateId();
+      fallbackGroupSessionsDb.set(mockId, { ...sessionData, _id: mockId });
+      return res.json({ success: true, sessionId: mockId, hostId: hostMember.id });
+    }
+  } catch (error) {
+    console.error("Error creating group:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+app.get('/api/group/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    let session = GroupSession ? await GroupSession.findById(id) : fallbackGroupSessionsDb.get(id);
+    if (!session) return res.status(404).json({ success: false, message: "Group not found" });
+    
+    // Return sanitized member list (no answers/votes)
+    const members = session.members.map(m => ({ id: m.id, name: m.name, hasSubmitted: Object.keys(m.answers).length > 0 }));
+    res.json({ success: true, status: session.status, hostName: session.hostName, members });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+app.post('/api/group/:id/join', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    let session = GroupSession ? await GroupSession.findById(id) : fallbackGroupSessionsDb.get(id);
+    
+    if (!session) return res.status(404).json({ success: false, message: "Group not found" });
+    if (session.status !== 'lobby') return res.status(400).json({ success: false, message: "Quiz already started" });
+    if (session.members.find(m => m.name.toLowerCase() === name.toLowerCase())) {
+      return res.status(400).json({ success: false, message: "Name already taken" });
+    }
+
+    const newMember = { id: generateId(), name, answers: {}, votes: {} };
+    
+    if (GroupSession) {
+      session.members.push(newMember);
+      await session.save();
+    } else {
+      session.members.push(newMember);
+      fallbackGroupSessionsDb.set(id, session);
+    }
+    
+    res.json({ success: true, memberId: newMember.id });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+app.post('/api/group/:id/start', async (req, res) => {
+  try {
+    const { id } = req.params;
+    let session = GroupSession ? await GroupSession.findById(id) : fallbackGroupSessionsDb.get(id);
+    if (!session) return res.status(404).json({ success: false, message: "Group not found" });
+    
+    if (GroupSession) {
+      session.status = 'active';
+      await session.save();
+    } else {
+      session.status = 'active';
+      fallbackGroupSessionsDb.set(id, session);
+    }
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+app.post('/api/group/:id/submit', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { memberId, answers, votes } = req.body; // votes = { questionId: chosenMemberId }
+    
+    let session = GroupSession ? await GroupSession.findById(id) : fallbackGroupSessionsDb.get(id);
+    if (!session) return res.status(404).json({ success: false, message: "Group not found" });
+    
+    const memberIndex = session.members.findIndex(m => m.id === memberId);
+    if (memberIndex === -1) return res.status(404).json({ success: false, message: "Member not found" });
+    
+    session.members[memberIndex].answers = answers;
+    session.members[memberIndex].votes = votes;
+    
+    // Check if everyone submitted
+    const allSubmitted = session.members.every(m => Object.keys(m.answers || {}).length > 0);
+    
+    if (GroupSession) {
+      if (allSubmitted) session.status = 'completed';
+      // Mark modified to ensure array saves in mongoose
+      session.markModified('members');
+      await session.save();
+    } else {
+      if (allSubmitted) session.status = 'completed';
+      fallbackGroupSessionsDb.set(id, session);
+    }
+    
+    if (allSubmitted) {
+      // Calculate results asynchronously (or wait)
+      await generateGroupResult(id, session);
+    }
+    
+    res.json({ success: true, allSubmitted });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+const generateGroupResult = async (sessionId, session) => {
+  // Simple AI Lore and Compatibility Engine
+  const members = session.members;
+  
+  // Count votes
+  const voteCounts = {}; // { memberId: count }
+  members.forEach(m => {
+    Object.values(m.votes || {}).forEach(votedId => {
+      voteCounts[votedId] = (voteCounts[votedId] || 0) + 1;
+    });
+  });
+  
+  // Assign labels
+  const primaryLabels = ["Main Character", "Therapist Friend", "Chaos Goblin", "Mastermind", "Social Butterfly", "Golden Retriever Energy"];
+  const secondaryLabels = ["Drama Magnet", "NPC Energy", "Professional Overthinker", "Certified Menace", "Ghost Responder"];
+  
+  const processedMembers = members.map(m => {
+    // Determine random labels (in real implementation, derive from answers/votes)
+    const pLabel = primaryLabels[Math.floor(Math.random() * primaryLabels.length)];
+    const sLabel1 = secondaryLabels[Math.floor(Math.random() * secondaryLabels.length)];
+    const sLabel2 = secondaryLabels[Math.floor(Math.random() * secondaryLabels.length)];
+    
+    // Base stats
+    const stats = {
+      leadership: Math.floor(Math.random() * 50) + 50,
+      humor: Math.floor(Math.random() * 50) + 50,
+      chaos: Math.floor(Math.random() * 50) + 50,
+      emotional: Math.floor(Math.random() * 50) + 50
+    };
+    
+    return {
+      id: m.id,
+      name: m.name,
+      primaryLabel: pLabel,
+      secondaryLabels: [sLabel1, sLabel2],
+      stats
+    };
+  });
+  
+  const groupTitles = ["Found Family", "Golden Chaos", "The Braincell Collective", "Unhinged But Loyal"];
+  const title = groupTitles[Math.floor(Math.random() * groupTitles.length)];
+  const compatibility = Math.floor(Math.random() * 30) + 70; // 70-100%
+  
+  // Generate Lore
+  const chaosMember = processedMembers.reduce((prev, current) => (prev.stats.chaos > current.stats.chaos) ? prev : current).name;
+  const therapistMember = processedMembers.reduce((prev, current) => (prev.stats.emotional > current.stats.emotional) ? prev : current).name;
+  const lore = \`This group functions like a sitcom that somehow keeps getting renewed. \${chaosMember} creates most of the chaos, \${therapistMember} keeps everyone emotionally stable, and the rest just go along for the ride. Despite the madness, the compatibility score is extremely high because the personalities balance each other perfectly.\`;
+
+  const resultData = {
+    sessionId,
+    groupTitle: title,
+    groupCompatibility: compatibility,
+    scores: {
+      trust: Math.floor(Math.random() * 20) + 80,
+      loyalty: Math.floor(Math.random() * 20) + 80,
+      chaos: Math.floor(Math.random() * 40) + 60,
+      meme: Math.floor(Math.random() * 30) + 70
+    },
+    lore,
+    members: processedMembers
+  };
+  
+  if (GroupResult) {
+    const newRes = new GroupResult(resultData);
+    await newRes.save();
+  } else {
+    fallbackGroupResultsDb.set(sessionId, resultData);
+  }
+};
+
+app.get('/api/group/:id/results', async (req, res) => {
+  try {
+    const { id } = req.params;
+    let result = GroupResult ? await GroupResult.findOne({ sessionId: id }) : fallbackGroupResultsDb.get(id);
+    
+    if (!result) return res.status(404).json({ success: false, message: "Results not ready or not found" });
+    res.json({ success: true, result });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
 });
 
 app.listen(PORT, () => {
